@@ -59,9 +59,15 @@ class TabularClassifier: Command {
 			trainingDataset = trainingTable
 		}
 		
+		var validationDataset: MLDataTable? = nil
+		if let validationDatasetPath = validation.value {
+			validationDataset = try Assertions.dataTable(from: validationDatasetPath, with: validationDataTableOptions())
+		}
+		
 		let classifier = try self.performTraining(
 			using: algorithm,
 			withTrainingData: trainingDataset,
+			withValidationData: validationDataset,
 			withTarget: target,
 			withFeatures: features
 		)
@@ -94,6 +100,7 @@ class TabularClassifier: Command {
 	private func performTraining(
 		using algorithm: String,
 		withTrainingData trainingData: MLDataTable,
+		withValidationData validation: MLDataTable?,
 		withTarget target: String,
 		withFeatures features: [String]?
 	) throws -> Classifier {
@@ -101,26 +108,31 @@ class TabularClassifier: Command {
 		case TabularClassifier.LOGISTIC_REGRESSION:
 			return try self.logisticClassifier(
 				withTrainingData: trainingData,
+				withValidationData: validation,
 				withTarget: target, withFeatures: features
 			)
 		case TabularClassifier.BOOSTED_TREE:
 			return try self.boostedTreeClassifier(
 				withTrainingData: trainingData,
+				withValidationData: validation,
 				withTarget: target, withFeatures: features
 			)
 		case TabularClassifier.DECISION_TREE:
 			return try self.decisionTreeClassifier(
 				withTrainingData: trainingData,
+				withValidationData: validation,
 				withTarget: target, withFeatures: features
 			)
 		case TabularClassifier.RANDOM_FOREST:
 			return try self.randomForestClassifier(
 				withTrainingData: trainingData,
+				withValidationData: validation,
 				withTarget: target, withFeatures: features
 			)
 		case TabularClassifier.SUPPORT_VECTOR:
 			return try self.supportVectorClassifier(
 				withTrainingData: trainingData,
+				withValidationData: validation,
 				withTarget: target, withFeatures: features
 			)
 		default:
@@ -148,12 +160,18 @@ class TabularClassifier: Command {
 	
 	private func logisticClassifier(
 		withTrainingData trainingData: MLDataTable,
+		withValidationData validation: MLDataTable?,
 		withTarget target: String,
 		withFeatures features: [String]?
 	) throws -> Classifier {
 		// TODO: Build options from parameters
-		let options = MLLogisticRegressionClassifier.ModelParameters()
-	
+		var options = MLLogisticRegressionClassifier.ModelParameters()
+		if let validation = validation {
+			options.validation = .table(validation)
+		} else {
+			options.validation = .split(strategy:.automatic)
+		}
+		
 		do {
 			let classifier = try MLLogisticRegressionClassifier(
 				trainingData: trainingData,
@@ -169,11 +187,17 @@ class TabularClassifier: Command {
 	
 	private func boostedTreeClassifier(
 		withTrainingData trainingData: MLDataTable,
+		withValidationData validation: MLDataTable?,
 		withTarget target: String,
 		withFeatures features: [String]?
 	) throws -> Classifier {
 		// TODO: Build options from parameters
-		let options = MLBoostedTreeClassifier.ModelParameters()
+		var options = MLBoostedTreeClassifier.ModelParameters()
+		if let validation = validation {
+			options.validation = .table(validation)
+		} else {
+			options.validation = .split(strategy:.automatic)
+		}
 	
 		do {
 			let classifier = try MLBoostedTreeClassifier(
@@ -190,11 +214,17 @@ class TabularClassifier: Command {
 	
 	private func decisionTreeClassifier(
 		withTrainingData trainingData: MLDataTable,
+		withValidationData validation: MLDataTable?,
 		withTarget target: String,
 		withFeatures features: [String]?
 	) throws -> Classifier {
 		// TODO: Build options from parameters
-		let options = MLDecisionTreeClassifier.ModelParameters()
+		var options = MLDecisionTreeClassifier.ModelParameters()
+		if let validation = validation {
+			options.validation = .table(validation)
+		} else {
+			options.validation = .split(strategy:.automatic)
+		}
 	
 		do {
 			let classifier = try MLDecisionTreeClassifier(
@@ -211,11 +241,17 @@ class TabularClassifier: Command {
 	
 	private func randomForestClassifier(
 		withTrainingData trainingData: MLDataTable,
+		withValidationData validation: MLDataTable?,
 		withTarget target: String,
 		withFeatures features: [String]?
 	) throws -> Classifier {
 		// TODO: Build options from parameters
-		let options = MLRandomForestClassifier.ModelParameters()
+		var options = MLRandomForestClassifier.ModelParameters()
+		if let validation = validation {
+			options.validation = .table(validation)
+		} else {
+			options.validation = .split(strategy:.automatic)
+		}
 	
 		do {
 			let classifier = try MLRandomForestClassifier(
@@ -233,11 +269,17 @@ class TabularClassifier: Command {
 	
 	private func supportVectorClassifier(
 		withTrainingData trainingData: MLDataTable,
+		withValidationData validation: MLDataTable?,
 		withTarget target: String,
 		withFeatures features: [String]?
 	) throws -> Classifier {
 		// TODO: Build options from parameters
-		let options = MLSupportVectorClassifier.ModelParameters()
+		var options = MLSupportVectorClassifier.ModelParameters()
+		if let validation = validation {
+			options.validation = .table(validation)
+		} else {
+			options.validation = .split(strategy:.automatic)
+		}
 	
 		do {
 			let classifier = try MLSupportVectorClassifier(

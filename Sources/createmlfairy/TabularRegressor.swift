@@ -58,9 +58,15 @@ class TabularRegressor: Command {
 			trainingDataset = trainingTable
 		}
 		
+		var validationDataset: MLDataTable? = nil
+		if let validationDatasetPath = validation.value {
+			validationDataset = try Assertions.dataTable(from: validationDatasetPath, with: validationDataTableOptions())
+		}
+		
 		let regressor = try self.performTraining(
 			using: algorithm,
 			withTrainingData: trainingDataset,
+			withValidationData: validationDataset,
 			withTarget: target,
 			withFeatures: features
 		)
@@ -87,6 +93,7 @@ class TabularRegressor: Command {
 	private func performTraining(
 		using algorithm: String,
 		withTrainingData trainingData: MLDataTable,
+		withValidationData validation: MLDataTable?,
 		withTarget target: String,
 		withFeatures features: [String]?
 	) throws -> Regressor {
@@ -95,21 +102,25 @@ class TabularRegressor: Command {
 		case TabularRegressor.LINEAR_REGRESSION:
 			return try self.linearRegression(
 				withTrainingData: trainingData,
+				withValidationData: validation,
 				withTarget: target, withFeatures: features
 			)
 		case TabularRegressor.BOOSTED_TREE:
 			return try self.boostedTreeRegression(
 				withTrainingData: trainingData,
+				withValidationData: validation,
 				withTarget: target, withFeatures: features
 			)
 		case TabularRegressor.DECISION_TREE:
 			return try self.decisionTreeRegression(
 				withTrainingData: trainingData,
+				withValidationData: validation,
 				withTarget: target, withFeatures: features
 			)
 		case TabularRegressor.RANDOM_FOREST:
 			return try self.randomForestRegression(
 				withTrainingData: trainingData,
+				withValidationData: validation,
 				withTarget: target, withFeatures: features
 			)
 		default:
@@ -137,12 +148,14 @@ class TabularRegressor: Command {
 	
 	private func linearRegression(
 		withTrainingData trainingData: MLDataTable,
+		withValidationData validation: MLDataTable?,
 		withTarget target: String,
 		withFeatures features: [String]?
 	) throws -> Regressor {
 		// TODO: Build options from parameters
-		let options = MLLinearRegressor.ModelParameters()
-	
+		var options = MLLinearRegressor.ModelParameters()
+		options.validationData = validation
+		
 		do {
 			let regressor = try MLLinearRegressor(
 				trainingData: trainingData,
@@ -158,11 +171,13 @@ class TabularRegressor: Command {
 	
 	private func boostedTreeRegression(
 		withTrainingData trainingData: MLDataTable,
+		withValidationData validation: MLDataTable?,
 		withTarget target: String,
 		withFeatures features: [String]?
 	) throws -> Regressor {
 		// TODO: Build options from parameters
-		let options = MLBoostedTreeRegressor.ModelParameters()
+		var options = MLBoostedTreeRegressor.ModelParameters()
+		options.validationData = validation
 	
 		do {
 			let regressor = try MLBoostedTreeRegressor(
@@ -179,11 +194,13 @@ class TabularRegressor: Command {
 	
 	private func decisionTreeRegression(
 		withTrainingData trainingData: MLDataTable,
+		withValidationData validation: MLDataTable?,
 		withTarget target: String,
 		withFeatures features: [String]?
 	) throws -> Regressor {
 		// TODO: Build options from parameters
-		let options = MLDecisionTreeRegressor.ModelParameters()
+		var options = MLDecisionTreeRegressor.ModelParameters()
+		options.validationData = validation
 	
 		do {
 			let regressor = try MLDecisionTreeRegressor(
@@ -200,11 +217,13 @@ class TabularRegressor: Command {
 	
 	private func randomForestRegression(
 		withTrainingData trainingData: MLDataTable,
+		withValidationData validation: MLDataTable?,
 		withTarget target: String,
 		withFeatures features: [String]?
 	) throws -> Regressor {
 		// TODO: Build options from parameters
-		let options = MLRandomForestRegressor.ModelParameters()
+		var options = MLRandomForestRegressor.ModelParameters()
+		options.validationData = validation
 
 		do {
 			let regressor = try MLRandomForestRegressor(
