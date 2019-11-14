@@ -8,7 +8,7 @@
 import Foundation
 import SwiftCLI
 
-let VERSION = "0.1.0"
+let VERSION = "0.3.0"
 let cli = CLI(name: "createmlfairy", version: VERSION, description: "CreateMLFairy - A CLI for CreateML by MLFairy")
 
 cli.commands = [
