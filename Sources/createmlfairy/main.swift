@@ -8,7 +8,8 @@
 import Foundation
 import SwiftCLI
 
-let cli = CLI(name: "createmlfairy", version: "1.0.0", description: "CreateMLFairy - A CLI for CreateML by MLFairy")
+let VERSION = "0.1.0"
+let cli = CLI(name: "createmlfairy", version: VERSION, description: "CreateMLFairy - A CLI for CreateML by MLFairy")
 
 cli.commands = [
 	ActivityClassifier(),
