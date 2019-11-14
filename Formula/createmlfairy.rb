@@ -4,8 +4,8 @@ class Createmlfairy < Formula
   desc "A CLI wrapper around CreateML"
   homepage "mlfairy.com"
   url "https://github.com/mlfairy/homebrew-createmlfairy.git",
-      :tag      => "0.1.0",
-      :revision => "f3ca7775c2d61025d0dea2a7ad3f1a5ab0d6f01f"
+      :tag      => "0.3.0",
+      :revision => "8510b14fa16cb9e483297b534068782989cb6b8c"
   head "https://github.com/mlfairy/homebrew-createmlfairy.git"
 
   depends_on :xcode => ["11.0", :build]
