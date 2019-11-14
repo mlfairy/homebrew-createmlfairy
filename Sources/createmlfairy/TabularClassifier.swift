@@ -23,8 +23,8 @@ class TabularClassifier: Command {
 	let classifier = Key<String>("--algorithm", description: "Algorithm used to train the model (\(RANDOM_FOREST), \(BOOSTED_TREE), \(DECISION_TREE), \(LOGISTIC_REGRESSION), \(SUPPORT_VECTOR)")
 	let target = Key<String>("--target", description: "Column name from tabular dataset to be used as the target")
 	let features = Key<String>("--features", description: "List of comma separated of column names from the tabular dataset to be used as the features. If no values are given, all columns (excluding the target column), will be used")
-	let validation = Key<String>("--validation", description: "Path to validation dataset")
-	let test = Key<String>("--test", description: "Path to test dataset")
+	let validation = Key<String>("--validation", description: "Path to validation dataset (.json or .csv)")
+	let test = Key<String>("--test", description: "Path to test dataset (.json or .csv)")
 	let split = Key<Int>("--train-test-split", description: "Percentage of data from training dataset that should be used for testing the model (0-100%)")
 	let seed = Key<Int>("--train-test-seed", description: "Seed used for train-test-split")
 	
@@ -80,21 +80,14 @@ class TabularClassifier: Command {
 		
 		stdout <<< "Evaluation error \(evaluationError)\nEvaluation accuracy \(evaluationAccuracy)"
 		
-		if let output = output.value {
-			if output.isEmpty {
-				throw MLFError(message: "Output file is empty")
-			}
-			
-			let metadata = MLModelMetadata(
-				author: author.value ?? "",
-				shortDescription: modelDescription.value ?? "",
-				license: license.value ?? "",
-				version: modelVersion.value ?? "",
-				additional: nil
-			)
-			
-			try classifier.write(toFile: output, metadata: metadata)
-		}
+		try Helpers.write(
+			with: classifier,
+			output: output.value,
+			author: author.value,
+			description: modelDescription.value,
+			version: modelVersion.value,
+			license: license.value
+		)
     }
 	
 	private func performTraining(

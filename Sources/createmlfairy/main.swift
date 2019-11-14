@@ -13,12 +13,12 @@ let cli = CLI(name: "createmlfairy", version: "1.0.0", description: "CreateMLFai
 cli.commands = [
 	ActivityClassifier(),
 	ImageClassifier(),
-	ObjectDetector(),
+//	ObjectDetector(),
 	SoundClassifier(),
 	TabularRegressor(),
 	TabularClassifier(),
 	TextClassifier(),
-	WordTagger()
+//	WordTagger()
 ]
 
 cli.goAndExit()
